@@ -1,5 +1,7 @@
 //yargs npm package for doing the user input from cmd and using it like commands
 
+let notes = require('./notes.js');
+
 const yargs = require("yargs");
 
 yargs.command({
@@ -34,8 +36,7 @@ yargs.command({
     },
   },
   handler: function (argv) {
-    console.log("Title " + argv.title);
-    console.log("Body " + argv.body);
+    notes.addNote(argv.title,argv.body);
   },
 });
 
