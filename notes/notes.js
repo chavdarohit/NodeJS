@@ -1,14 +1,26 @@
+const { default: chalk } = require("chalk");
 const fs = require("fs");
 
-const notes = function () {
-  return "your notes...";
+const getAllNotes = () => loadNotes();
+
+const listNotes = () => {
+  const notes = loadNotes();
+
+  const titles = notes.map((doc) => doc.title);
+  console.log(chalk.bgGreen("Your Notes"));
+  // console.log(...titles);
+
+  for (let [index, title] of titles.entries()) {
+    console.log(`${index + 1} is ${title}`);
+  }
 };
-const addNote = function (title, body) {
+
+const addNote = (title, body) => {
   const notes = loadNotes();
   // console.log(notes);
 
-  const dupli = notes.filter((note) => note.title === title);
-  if (dupli.length === 0) {
+  const dupli = notes.find((note) => note.title === title);
+  if (!dupli) {
     notes.push({
       title: title,
       body: body,
@@ -21,12 +33,37 @@ const addNote = function (title, body) {
   }
 };
 
-const saveNotes = function (notes) {
+const removeNote = (title) => {
+  const notes = loadNotes();
+
+  const findtitle = notes.find((note) => note.title === title);
+  if (findtitle) {
+    const newArray = notes.filter((note) => note.title != title);
+    saveNotes(newArray);
+    console.log(chalk.bgGreen("Note deleted Succesfully"));
+  } else {
+    console.log(chalk.bgRed("Note not found"));
+  }
+};
+
+const readNotes = (title)=>{
+
+const notes= loadNotes()
+  const found = notes.find(doc => doc.title === title)
+
+  if(!found)
+    console.log(chalk.red.inverse("No data found"));
+  else
+      console.log(`Title = ${chalk.inverse(found.title)} and body = ${found.body}`);
+    
+}
+
+const saveNotes = (notes) => {
   const dataJSon = JSON.stringify(notes);
   fs.writeFileSync("notes.json", dataJSon);
 };
 
-const loadNotes = function () {
+const loadNotes = () => {
   try {
     const databuffer = fs.readFileSync("notes.json");
     return (dataJSON = JSON.parse(databuffer.toString()));
@@ -36,6 +73,9 @@ const loadNotes = function () {
 };
 
 module.exports = {
-  getNote: notes,
-  addNote: addNote,
+  getAllNotes,
+  addNote,
+  removeNote,
+  listNotes,
+  readNotes,
 };
